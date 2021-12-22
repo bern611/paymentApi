@@ -14,7 +14,7 @@
 	<name>norstienpaymentsapi</name>
 	<description>REST API for taking tenant payments</description>
 	<properties>
-		<java.version>17</java.version>
+		<java.version>11</java.version>
 	</properties>
         
         <packaging>jar</packaging>
