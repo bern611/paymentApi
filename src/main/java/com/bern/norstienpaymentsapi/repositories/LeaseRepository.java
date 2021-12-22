@@ -5,29 +5,27 @@
  */
 package com.bern.norstienpaymentsapi.repositories;
 
-import com.bern.norstienpaymentsapi.entity.Property;
+import com.bern.norstienpaymentsapi.entity.Lease;
 import com.bern.norstienpaymentsapi.entity.Tenant;
 import java.util.List;
 import java.util.UUID;
 import javax.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 /**
  *
  * @author unknown
  */
-@Repository
 @Transactional
-public interface TenantRepository extends JpaRepository<Tenant, Long> {
+public interface LeaseRepository extends JpaRepository<Lease, Long> {
 
-    Tenant findById(long id);
+    List<Lease> findAll();
 
-    List<Tenant> findAll();
-    
-    List<Tenant> findTenantsByProperty(Property property);
+    Lease findById(long id);
 
-    Tenant findByUuid(UUID uuid);
+    Lease findByUuid(UUID uuid);
+
+    List<Lease> findLeasesByTenant(Tenant tenant);
 
     public void deleteByUuid(UUID uuid);
 }

@@ -1,0 +1,1672 @@
+{
+	"info": {
+		"_postman_id": "e3d6cb77-f78d-4755-a169-6d9ce3facd5a",
+		"name": "PaymentsAPI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "property",
+			"item": [
+				{
+					"name": "Property Post",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"property1UUID\", jsonData.uuid);",
+									"",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Address is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    ",
+									"    pm.expect(jsonData.address.addressline1).to.eql(\"5467 Macnamar St\");",
+									"});",
+									"",
+									"pm.test(\"UUID String is Set\",function (){",
+									"    var jsonData = pm.response.json();",
+									"    var uuid = jsonData.uuid",
+									"",
+									"    pm.collectionVariables.set(\"property1UUID\", uuid);",
+									"",
+									"    pm.expect(pm.collectionVariables.get(\"property1UUID\")).to.eq(jsonData.uuid);",
+									"",
+									"});",
+									"",
+									"pm.test(\"Root Property Id Set\",function (){",
+									"    var jsonData = pm.response.json();",
+									"    var id = jsonData.id",
+									"    pm.collectionVariables.set(\"rootPropertyId\", id);",
+									"",
+									"    pm.expect(pm.collectionVariables.get(\"rootPropertyId\")).to.eq(jsonData.id);",
+									"",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"Reginald Hills\",\n    \"imageUrl\":\"https://imgur.com/kgie532\",\n    \"address\":{\n        \"addressline1\":\"5467 Macnamar St\",\n        \"addressline2\":null,\n        \"city\":\"Charlotte\",\n        \"statecode\":\"NC\",\n        \"zip\":\"28202\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/properties/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"properties",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Entity Post",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"",
+									"pm.test(\"Test Entity Id Set\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"propertyId\", jsonData.id);",
+									"",
+									"    pm.expect(pm.collectionVariables.get(\"propertyId\")).to.eq(jsonData.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"Molly Oaks\",\n    \"imageUrl\":\"https://ifunny.co/gjl694z0\",\n    \"address\":{\n        \"addressline1\":\"5467 Macnamar St\",\n        \"addressline2\":null,\n        \"city\":\"Spartenburg\",\n        \"statecode\":\"SC\",\n        \"zip\":\"28202\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/properties/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"properties",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Property 2 Post",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"UUID String is Set\",function (){",
+									"    var jsonData = pm.response.json();",
+									"    var uuid = jsonData.uuid",
+									"",
+									"    pm.collectionVariables.set(\"property2UUID\", uuid);",
+									"",
+									"    pm.expect(pm.collectionVariables.get(\"property2UUID\")).to.eq(jsonData.uuid);",
+									"",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"Jenkins Junction\",\n    \"imageUrl\":\"https://imgur.com/69420\",\n    \"address\":{\n        \"addressline1\":\"5467 Macnamar St\",\n        \"addressline2\":null,\n        \"city\":\"Kanaopolis\",\n        \"statecode\":\"NC\",\n        \"zip\":\"29537\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/properties/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"properties",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Property",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Name Update successful\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.name).to.eql(\"Humbersnatch Acres\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"Humbersnatch Acres\"\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/properties/{{propertyId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"properties",
+								"{{propertyId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Property",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Grabbed Correct Property\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.name).to.eql(\"Humbersnatch Acres\");",
+									"",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/properties/{{propertyId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"properties",
+								"{{propertyId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "All Properties",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/properties/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"properties",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Property",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/properties/{{propertyId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"properties",
+								"{{propertyId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Non Existant Property",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/properties/925",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"properties",
+								"925"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "tenant",
+			"item": [
+				{
+					"name": "Tenant Post",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"UUID String is Set\",function (){",
+									"    var jsonData = pm.response.json();",
+									"    var uuid = jsonData.uuid",
+									"",
+									"    pm.collectionVariables.set(\"tenantUUID\", uuid);",
+									"",
+									"    pm.expect(pm.collectionVariables.get(\"tenantUUID\")).to.eq(jsonData.uuid);",
+									"",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\":\"email@example.com\",\n    \"password\":\"supersecretpassword\",\n    \"userStatus\":\"offline\",\n    \"firstname\":\"Sandi\",\n    \"lastname\":\"Buruva\",\n    \"isActive\":false,\n    \"createdAt\":\"2016-03-28T18:00:00.000Z\",\n    \"updatedAt\":\"2016-03-28T18:00:00.000Z\",\n    \"deletedAt\": null\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/tenants/properties/uuid/{{property1UUID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"tenants",
+								"properties",
+								"uuid",
+								"{{property1UUID}}"
+							],
+							"query": [
+								{
+									"key": "uuid",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Entity Post",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"UUID String is Set\",function (){",
+									"    var jsonData = pm.response.json();",
+									"    var id = jsonData.id",
+									"",
+									"    pm.collectionVariables.set(\"tenantId\", id);",
+									"",
+									"    pm.expect(pm.collectionVariables.get(\"tenantId\")).to.eq(jsonData.id);",
+									"",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\":\"email@example.net\",\n    \"password\":\"superdupersecretpassword\",\n    \"userStatus\":\"offline\",\n    \"firstname\":\"Peirma\",\n    \"lastname\":\"Michlovic\",\n    \"isActive\":false,\n    \"createdAt\":\"2016-03-28T18:00:00.000Z\",\n    \"updatedAt\":\"2016-03-28T18:00:00.000Z\",\n    \"deletedAt\": null\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/tenants/properties/uuid/{{property1UUID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"tenants",
+								"properties",
+								"uuid",
+								"{{property1UUID}}"
+							],
+							"query": [
+								{
+									"key": "uuid",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Tenants By Property",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/tenants/properties/uuid/{{property1UUID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"tenants",
+								"properties",
+								"uuid",
+								"{{property1UUID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Tenant Residence",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Update Successful\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.property.name).to.eql(\"Jenkins Junction\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"newPropertyUuid\":\"{{property2UUID}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/tenants/{{tenantId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"tenants",
+								"{{tenantId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "All Tenants",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/tenants/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"tenants",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Tenant",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Correct Tenant\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.lastname).to.eql(\"Michlovic\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/tenants/{{tenantId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"tenants",
+								"{{tenantId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Tenant",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/tenants/{{tenantId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"tenants",
+								"{{tenantId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "leases",
+			"item": [
+				{
+					"name": "Create Lease",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"UUID String is Set\",function (){",
+									"    var jsonData = pm.response.json();",
+									"    var uuid = jsonData.uuid",
+									"",
+									"    pm.collectionVariables.set(\"leaseUUID\", uuid);",
+									"",
+									"    pm.expect(pm.collectionVariables.get(\"leaseUUID\")).to.eq(jsonData.uuid);",
+									"",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"lengthInDays\":730,\n    \"isAutoRenew\":true,\n    \"status\":\"Applied\",\n    \"startDate\":\"2022-02-01T10:01:30.102045637-05:00\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/leases/tenants/uuid/{{tenantUUID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"leases",
+								"tenants",
+								"uuid",
+								"{{tenantUUID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Entity Post",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Test Entity Id Set\",function (){",
+									"    var jsonData = pm.response.json();",
+									"    var id = jsonData.id",
+									"",
+									"    pm.collectionVariables.set(\"leaseId\", id);",
+									"",
+									"    pm.expect(pm.collectionVariables.get(\"leaseId\")).to.eq(jsonData.id);",
+									"",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"lengthInDays\":730,\n    \"isAutoRenew\":false,\n    \"status\":\"Pending\",\n    \"startDate\":\"2022-02-01T10:01:30.102045637-05:00\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/leases/tenants/uuid/{{tenantUUID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"leases",
+								"tenants",
+								"uuid",
+								"{{tenantUUID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Lease",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/leases/{{leaseId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"leases",
+								"{{leaseId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Lease By Tenants",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Lease Found\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].uuid).to.eql(pm.collectionVariables.get(\"leaseUUID\"));",
+									"",
+									"});",
+									"",
+									"pm.test(\"Tenant Found\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].tenant.uuid).to.eql(pm.collectionVariables.get(\"tenantUUID\"));",
+									"",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/leases/tenants/uuid/{{tenantUUID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"leases",
+								"tenants",
+								"uuid",
+								"{{tenantUUID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "All Leases",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/leases/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"leases",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Lease #4",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/leases/{{leaseId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"leases",
+								"{{leaseId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "invoices",
+			"item": [
+				{
+					"name": "Create Invoice",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"UUID String is Set\",function (){",
+									"    var jsonData = pm.response.json();",
+									"    var uuid = jsonData.uuid",
+									"",
+									"    pm.collectionVariables.set(\"invoiceUUID\", uuid);",
+									"",
+									"    pm.expect(pm.collectionVariables.get(\"invoiceUUID\")).to.eq(jsonData.uuid);",
+									"",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"invoiceNumber\":\"AEX129465-GXB\",\n    \"invoiceDate\":\"2021-12-20\",\n    \"paymentDueDate\":\"2022-01-20\",\n    \"paidDate\":\"2021-12-20\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/invoices/leases/uuid/{{leaseUUID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"invoices",
+								"leases",
+								"uuid",
+								"{{leaseUUID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Entity Post",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Id is Set\",function (){",
+									"    var jsonData = pm.response.json();",
+									"    var id = jsonData.id",
+									"",
+									"    pm.collectionVariables.set(\"invoiceId\", id);",
+									"",
+									"    pm.expect(pm.collectionVariables.get(\"invoiceId\")).to.eq(jsonData.id);",
+									"",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"invoiceNumber\":\"AEX129465-GXB\",\n    \"invoiceDate\":\"2021-12-20\",\n    \"paymentDueDate\":\"2022-01-20\",\n    \"paidDate\":\"2021-12-20\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/invoices/leases/uuid/{{leaseUUID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"invoices",
+								"leases",
+								"uuid",
+								"{{leaseUUID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Invoice",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Update Successful\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.paidDate).to.eql(\"2021-03-04\");",
+									"    pm.expect(jsonData.paymentDueDate).to.eql(\"2022-02-20\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"paymentDueDate\":\"2022-02-20\",\n    \"paidDate\": \"2021-03-04\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/invoices/{{invoiceId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"invoices",
+								"{{invoiceId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Invoice By Lease",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/invoices/leases/uuid/{{leaseUUID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"invoices",
+								"leases",
+								"uuid",
+								"{{leaseUUID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Invoice #5",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Correct Invoice\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.paidDate).to.eql(\"2021-03-04\");",
+									"    pm.expect(jsonData.invoiceNumber).to.eql(\"AEX129465-GXB\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/invoices/{{invoiceId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"invoices",
+								"{{invoiceId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Invoice #5",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/invoices/{{invoiceId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"invoices",
+								"{{invoiceId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "payment",
+			"item": [
+				{
+					"name": "CreatePayment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Id set\", function () {",
+									"    var jsonData = pm.response.json();",
+									"",
+									"",
+									"    pm.collectionVariables.set(\"paymentId\", jsonData.id);",
+									"",
+									"    pm.expect(pm.collectionVariables.get(\"paymentId\")).to.eql(jsonData.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"paymentType\":\"CREDIT_CARD\",\n    \"status\":\"PENDING\",\n    \"amount\":1540\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/payments/invoices/uuid/{{invoiceUUID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"payments",
+								"invoices",
+								"uuid",
+								"{{invoiceUUID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Payments By Invoice",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/payments/invoices/uuid/{{invoiceUUID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"payments",
+								"invoices",
+								"uuid",
+								"{{invoiceUUID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Payment with ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/payments/{{paymentId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"payments",
+								"{{paymentId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Payment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Update Successful\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"COMPLETED\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"paymentStatus\":\"COMPLETED\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/payments/{{paymentId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"payments",
+								"{{paymentId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Payment #6",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/payments/{{paymentId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"payments",
+								"{{paymentId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "line_item",
+			"item": [
+				{
+					"name": "Create Line Item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Id set\", function () {",
+									"    var jsonData = pm.response.json();",
+									"",
+									"",
+									"    pm.collectionVariables.set(\"lineItemId\", jsonData.id);",
+									"",
+									"    pm.expect(pm.collectionVariables.get(\"lineItemId\")).to.eql(jsonData.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"description\":\"Three Month Rent\",\n    \"amount\":1580,\n    \"quantity\":1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/line_item/invoices/uuid/{{invoiceUUID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"line_item",
+								"invoices",
+								"uuid",
+								"{{invoiceUUID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Line Items By Invoice",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/line_item/invoices/uuid/{{invoiceUUID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"line_item",
+								"invoices",
+								"uuid",
+								"{{invoiceUUID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Line Item with ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Your test name\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.description).to.eql(\"Three Month Rent\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/line_item/{{lineItemId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"line_item",
+								"{{lineItemId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Line Item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Update Successful\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.description).to.eql(\"One Month Rent\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"lineItemDescription\":\"One Month Rent\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/line_item/{{lineItemId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"line_item",
+								"{{lineItemId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Line Item",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/line_item/{{lineItemId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"line_item",
+								"{{lineItemId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Delete Entites",
+			"item": [
+				{
+					"name": "Delete Invoice",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/invoices/uuid/{{invoiceUUID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"invoices",
+								"uuid",
+								"{{invoiceUUID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Lease",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/leases/uuid/{{leaseUUID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"leases",
+								"uuid",
+								"{{leaseUUID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Tenant",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/tenants/uuid/{{tenantUUID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"tenants",
+								"uuid",
+								"{{tenantUUID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Property",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/properties/uuid/{{property1UUID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"properties",
+								"uuid",
+								"{{property1UUID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Property 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/properties/uuid/{{property2UUID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"properties",
+								"uuid",
+								"{{property2UUID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "property1UUID",
+			"value": "0"
+		},
+		{
+			"key": "property2UUID",
+			"value": "0"
+		},
+		{
+			"key": "tenantUUID",
+			"value": "0"
+		},
+		{
+			"key": "leaseUUID",
+			"value": "0"
+		},
+		{
+			"key": "invoiceUUID",
+			"value": "0"
+		},
+		{
+			"key": "propertyId",
+			"value": "0"
+		},
+		{
+			"key": "tenantId",
+			"value": "0"
+		},
+		{
+			"key": "leaseId",
+			"value": "0"
+		},
+		{
+			"key": "invoiceId",
+			"value": "0"
+		},
+		{
+			"key": "paymentId",
+			"value": "0"
+		},
+		{
+			"key": "lineItemId",
+			"value": "0"
+		},
+		{
+			"key": "rootPropertyId",
+			"value": "0"
+		}
+	]
+}
