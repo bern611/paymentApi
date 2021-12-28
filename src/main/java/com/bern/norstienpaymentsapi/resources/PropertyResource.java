@@ -19,19 +19,25 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.util.json.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author unknown
  */
 @Transactional
+@Component("propertyApi")
 @Path("/properties")
 public class PropertyResource {
 
     @Autowired
-    PropertyDao propertyManager;
+    private PropertyDao propertyManager;
+
+    @Autowired
+    private ProducerTemplate template;
 
     @GET
     @Produces("application/json")
@@ -44,6 +50,7 @@ public class PropertyResource {
     @Produces("application/json")
 
     public Response createProperty(Property property) {
+        //template.request(endpoint, processor)
 
         return Response.ok().entity(propertyManager.save(property)).build();
     }
@@ -58,25 +65,24 @@ public class PropertyResource {
     @DELETE
     @Path("/{id}")
     public Response deleteProperty(@PathParam("id") long id) {
-        
+
         propertyManager.deleteById(id);
         return Response.noContent().build();
     }
-    
+
     @DELETE
     @Path("/uuid/{uuid}")
     public Response deleteProperty(@PathParam("uuid") UUID uuid) {
         propertyManager.deleteByUuid(uuid);
         return Response.noContent().build();
     }
-    
 
     @PUT
     @Consumes("application/json")
     @Produces("application/json")
     @Path("/{id}")
     public Response updateProperty(@PathParam("id") long id, JsonObject payload) {
-        
+
         return Response.ok(propertyManager.updateProperty(id, payload)).build();
     }
 }

@@ -9,6 +9,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
+import org.hibernate.exception.ConstraintViolationException;
 
 /**
  *
@@ -21,7 +22,13 @@ public class ExceptionHandler implements ExceptionMapper<Throwable> {
     public Response toResponse(Throwable e) {
         if (e instanceof EntityNotFoundException || e instanceof InvalidPayloadException) {
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
-        } else {
+        } 
+        
+        else if (e.getCause() instanceof ConstraintViolationException){
+            return Response.status(Response.Status.CONFLICT).entity("Attempted to save non-unqiue entity").build();
+        }
+        
+        else {
             return Response.serverError().build();
         }
     }

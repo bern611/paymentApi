@@ -71,6 +71,12 @@ public class Property extends IdentifiableByUUID {
         return address;
     }
 
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+    
+    
+
     
     
     @Override

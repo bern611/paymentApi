@@ -5,6 +5,7 @@
  */
 package com.bern.norstienpaymentsapi.daos;
 
+import com.bern.norstienpaymentsapi.InvalidPayloadException;
 import com.bern.norstienpaymentsapi.entity.Property;
 import com.bern.norstienpaymentsapi.repositories.PropertyRepository;
 import java.util.List;
@@ -13,7 +14,10 @@ import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import org.apache.camel.util.json.JsonObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 /**
@@ -21,11 +25,14 @@ import org.springframework.stereotype.Service;
  * @author unknown
  */
 @Service
+@Component("propertyManager")
 @Transactional
 public class PropertyDao {
 
     @Autowired
     private PropertyRepository propertyRepo;
+    
+    private static final Logger LOG = LoggerFactory.getLogger(PropertyDao.class);
 
     public List<Property> findAll() {
         return propertyRepo.findAll();
@@ -33,9 +40,14 @@ public class PropertyDao {
 
     public Property save(@Valid Property property) {
         try {
-            return propertyRepo.save(property);
-        } catch (Exception ex) {
-            throw new RuntimeException("Error Saving Property", ex);
+            
+            Property returnProperty = propertyRepo.save(property);
+            
+            LOG.info("Property " + returnProperty.getUuid() + " saved");
+            
+            return returnProperty;   
+        }   catch (Exception ex) {
+            throw new RuntimeException("Error Saving Property");
         }
     }
 
@@ -49,6 +61,7 @@ public class PropertyDao {
 
     public void deleteById(long id) {
         try {
+            LOG.info("Attempting to Delete Property " + id);
             propertyRepo.deleteById(id);
         } catch (Exception e) {
             throw new EntityNotFoundException("Unabled to Find Property With Id " + id);
@@ -65,7 +78,7 @@ public class PropertyDao {
 
     public Property updateProperty(long id, JsonObject payload) {
         if (payload == null || !(payload.containsKey("name") || payload.containsKey("imageUrl"))) {
-            throw new RuntimeException("Payload must contain keys name or imageUrl");
+            throw new InvalidPayloadException("Payload must contain keys name or imageUrl");
         }
 
         Property foundById = findById(id);
@@ -78,6 +91,7 @@ public class PropertyDao {
             if (payload.containsKey("imageUrl")) {
                 foundById.setImageUrl(payload.getString("imageUrl"));
             }
+            LOG.info("Updated Property " + foundById.getUuid());
             return save(foundById);
         }
     }
