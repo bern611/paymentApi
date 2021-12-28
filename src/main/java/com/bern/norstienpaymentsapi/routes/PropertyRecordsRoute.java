@@ -19,12 +19,10 @@ public class PropertyRecordsRoute extends RouteBuilder {
     @Value("${pathToCsvFile}")
     String pathToFile;
 
-    //@Value("${csvFileName}")
-    String csvFileName = null;
 
     @Override
     public void configure() throws Exception {
-        //"/home/unknown/Downloads/?fileName=propertyApi.csv"
+
 
         String filePath = assembleCamelFilePath();
 
@@ -36,42 +34,22 @@ public class PropertyRecordsRoute extends RouteBuilder {
                 .split(body().tokenize("\n", 1, true))
                 .bean(CamelDataReader.class, "process")
                 .to("log:newPropertyLogger");
-        /*from("timer:daTimer")
-        .bean(CamelDataReader.class,"hello");*/
     }
 
     private String assembleCamelFilePath() {
-        if (csvFileName == null) {
-            return spliceString(pathToFile.lastIndexOf('/'));
-        }
-
-        if (pathToFile != null && pathToFile.endsWith("/")) {
-
-            String filePath = pathToFile + "?fileName=" + csvFileName;
-
-            System.out.println(filePath);
-
-            return filePath;
-        } else {
-            throw new RuntimeException("pathToCsvFile must be specified");
-        }
-
-    }
-
-    private String spliceString(int index) {
         String newString = new String();
-
         for (int i = 0; i < pathToFile.length(); i++) {
 
             newString += pathToFile.charAt(i);
 
-            if (i == index) {
-
+            if (i == pathToFile.lastIndexOf("/")) {
                 newString += "?fileName=";
             }
         }
 
         return newString;
     }
+
+ 
 
 }
