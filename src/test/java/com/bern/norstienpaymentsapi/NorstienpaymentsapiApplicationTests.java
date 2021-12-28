@@ -5,7 +5,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
 @SpringBootTest
-@TestPropertySource(properties = "pathToCsvFile=/home/unknown/Downloads/propertyApi.csv")
+@TestPropertySource(properties = "pathToCsvFile=/path/to/csv/file.csv")
 class NorstienpaymentsapiApplicationTests {
 
 	@Test
