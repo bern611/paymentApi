@@ -14,6 +14,9 @@ import java.util.List;
 import java.util.UUID;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
+import javax.validation.Valid;
+import org.apache.camel.Body;
+import org.apache.camel.Header;
 import org.apache.camel.util.json.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +35,7 @@ public class PaymentDao {
     @Autowired
     InvoiceDao invoiceManager;
 
-    public Payment createPayment(UUID invoiceUuid, Payment payment) {
+    public Payment createPayment(@Header("uuid") UUID invoiceUuid, @Body @Valid Payment payment) {
         Invoice invoice = invoiceManager.findByUuid(invoiceUuid);
 
         payment.setInvoice(invoice);
@@ -46,7 +49,7 @@ public class PaymentDao {
         return paymentRepo.save(payment);
     }
 
-    public Payment updatePayment(long id, JsonObject payload) {
+    public Payment updatePayment(@Header("id") long id, @Body JsonObject payload) {
         if (payload != null && (payload.containsKey("paymentStatus"))) {
             Payment payment = findById(id);
 
@@ -59,7 +62,7 @@ public class PaymentDao {
         }
     }
 
-    public Payment findById(long id) {
+    public Payment findById(@Body long id) {
         try {
             return paymentRepo.findById(id);
         } catch (Exception e) {
@@ -67,7 +70,7 @@ public class PaymentDao {
         }
     }
     
-    public Payment findByUuid(UUID uuid) {
+    public Payment findByUuid(@Body UUID uuid) {
         try {
             return paymentRepo.findByUuid(uuid);
         } catch (Exception e) {
@@ -75,7 +78,7 @@ public class PaymentDao {
         }
     }
 
-    public List<Payment> findPaymentsByInvoice(UUID invoiceUuid) {
+    public List<Payment> findPaymentsByInvoice(@Body UUID invoiceUuid) {
         Invoice invoice = invoiceManager.findByUuid(invoiceUuid);
         return paymentRepo.findPaymentsByInvoice(invoice);
     }
@@ -84,7 +87,7 @@ public class PaymentDao {
         return paymentRepo.findAll();
     }
 
-    public void delete(long id) {
+    public void deleteById(@Body long id) {
         try {
             paymentRepo.deleteById(id);
         } catch (Exception e) {
@@ -92,7 +95,7 @@ public class PaymentDao {
         }
     }
 
-    public void deleteByUuid(UUID uuid) {
+    public void deleteByUuid(@Body UUID uuid) {
         try {
             paymentRepo.deleteByUuid(uuid);
         } catch (Exception e) {

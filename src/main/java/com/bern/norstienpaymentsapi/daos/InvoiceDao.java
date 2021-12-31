@@ -14,7 +14,8 @@ import java.util.UUID;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
-import javax.ws.rs.core.Response;
+import org.apache.camel.Body;
+import org.apache.camel.Header;
 import org.apache.camel.util.json.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,7 +34,7 @@ public class InvoiceDao {
     @Autowired
     LeaseDao leaseManager;
 
-    public Invoice createInvoice(UUID leaseUuid, @Valid Invoice invoice) {
+    public Invoice createInvoice(@Header("uuid") UUID leaseUuid, @Body @Valid Invoice invoice) {
         Lease lease = leaseManager.findByUuid(leaseUuid);
 
         invoice.setLease(lease);
@@ -45,7 +46,7 @@ public class InvoiceDao {
         return invoiceRepo.save(invoice);
     }
 
-    public List<Invoice> findInvoicesByLease(UUID leaseUuid) {
+    public List<Invoice> findInvoicesByLease(@Body UUID leaseUuid) {
         Lease lease = leaseManager.findByUuid(leaseUuid);
         return invoiceRepo.findInvoicesByLease(lease);
     }
@@ -54,7 +55,7 @@ public class InvoiceDao {
         return invoiceRepo.findAll();
     }
 
-    public Invoice findById(long id) {
+    public Invoice findById(@Body long id) {
         try {
             return invoiceRepo.findById(id);
         } catch (Exception e) {
@@ -62,7 +63,7 @@ public class InvoiceDao {
         }
     }
 
-    public Invoice findByUuid(UUID uuid) {
+    public Invoice findByUuid(@Body UUID uuid) {
         try {
             return invoiceRepo.findByUuid(uuid);
         } catch (Exception e) {
@@ -70,7 +71,7 @@ public class InvoiceDao {
         }
     }
 
-    public void delete(long id) {
+    public void deleteById(@Body long id) {
         try {
             invoiceRepo.deleteById(id);
         } catch (Exception e) {
@@ -78,7 +79,7 @@ public class InvoiceDao {
         }
     }
 
-    public void deleteByUuid(UUID uuid) {
+    public void deleteByUuid(@Body UUID uuid) {
         try {
             invoiceRepo.deleteByUuid(uuid);
         } catch (Exception e) {
@@ -86,7 +87,7 @@ public class InvoiceDao {
         }
     }
 
-    public Invoice updateInvoice(long id, JsonObject payload) {
+    public Invoice updateInvoice(@Header("id") long id, @Body JsonObject payload) {
         if (payload != null && (payload.containsKey("paymentDueDate") || payload.containsKey("paidDate"))) {
             
             Invoice invoice = findById(id);

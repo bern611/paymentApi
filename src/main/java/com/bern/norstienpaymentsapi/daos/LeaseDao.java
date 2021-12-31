@@ -14,6 +14,8 @@ import java.util.UUID;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
+import org.apache.camel.Body;
+import org.apache.camel.Header;
 import org.apache.camel.util.json.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +34,7 @@ public class LeaseDao {
     @Autowired
     private TenantDao tenantManager;
 
-    public Lease createLease(UUID tenantUuid, @Valid Lease lease) {
+    public Lease createLease(@Header("uuid") UUID tenantUuid, @Body @Valid Lease lease) {
 
         Tenant tenant = tenantManager.findByUuid(tenantUuid);
         lease.setTenant(tenant);
@@ -46,11 +48,11 @@ public class LeaseDao {
         try {
             return leaseRepo.save(lease);
         } catch (Exception e) {
-            throw new RuntimeException("Failed To Save Tenant", e);
+            throw new RuntimeException("Failed To Save Tenant");
         }
     }
 
-    public Lease findById(long id) {
+    public Lease findById(@Body long id) {
         try {
             return leaseRepo.findById(id);
         } catch (Exception e) {
@@ -58,7 +60,7 @@ public class LeaseDao {
         }
     }
 
-    public List<Lease> findLeasesByTenant(UUID tenantUuid) {
+    public List<Lease> findLeasesByTenant(@Body UUID tenantUuid) {
         Tenant tenant = tenantManager.findByUuid(tenantUuid);
 
         return leaseRepo.findLeasesByTenant(tenant);
@@ -68,7 +70,7 @@ public class LeaseDao {
         return leaseRepo.findAll();
     }
 
-    public void delete(long id) {
+    public void deleteById(@Body long id) {
         try {
             leaseRepo.deleteById(id);
         } catch (Exception e) {
@@ -76,7 +78,7 @@ public class LeaseDao {
         }
     }
 
-    public void deleteByUuid(UUID uuid) {
+    public void deleteByUuid(@Body UUID uuid) {
         try {
             leaseRepo.deleteByUuid(uuid);
         } catch (Exception e) {
@@ -84,29 +86,34 @@ public class LeaseDao {
         }
     }
 
-    public Lease updateLease(long id, JsonObject payload) {
+    public Lease updateLease(@Header("id") long id, @Body JsonObject payload) {
         if (payload != null && (payload.containsKey("leaseStatus") || payload.containsKey("isLeaseAutoRenew"))) {
 
             Lease lease = findById(id);
+            if (lease == null) {
+                throw new EntityNotFoundException("Unable to locate Lease with ID " + id);
+            } 
+            else {
+                if (payload.containsKey("leaseStatus")) {
+                    lease.setStatus(payload.getString("leaseStatus"));
+                }
 
-            if (payload.containsKey("leaseStatus")) {
-                lease.setStatus(payload.getString("leaseStatus"));
+                if (payload.containsKey("isLeaseAutoRenew")) {
+                    lease.setIsAutoRenew(payload.getBoolean("isLeaseAutoRenew"));
+                }
+
+                lease.setUpdatedAt(ZonedDateTime.now());
+                return save(lease);
             }
-
-            if (payload.containsKey("isLeaseAutoRenew")) {
-                lease.setIsAutoRenew(payload.getBoolean("isLeaseAutoRenew"));
-            }
-
-            lease.setUpdatedAt(ZonedDateTime.now());
-            return save(lease);
-
-        } else {
-            //TODO implement incorrect Payload Exception
+        } 
+        
+        else {
             throw new InvalidPayloadException("Payload Must Contain Keys leaseStatus and/or isLeaseAutoRenew");
         }
+
     }
 
-    public Lease findByUuid(UUID uuid) {
+    public Lease findByUuid(@Body UUID uuid) {
         try {
             return leaseRepo.findByUuid(uuid);
         } catch (Exception e) {

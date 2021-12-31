@@ -15,9 +15,6 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"var jsonData = pm.response.json();",
-									"",
-									"",
 									"pm.test(\"Status code is 200\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    pm.collectionVariables.set(\"property1UUID\", jsonData.uuid);",
@@ -155,6 +152,52 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"name\":\"Jenkins Junction\",\n    \"imageUrl\":\"https://imgur.com/69420\",\n    \"address\":{\n        \"addressline1\":\"5467 Macnamar St\",\n        \"addressline2\":null,\n        \"city\":\"Kanaopolis\",\n        \"statecode\":\"NC\",\n        \"zip\":\"29537\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/properties/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"properties",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Post Non-Unqiue Entity",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"",
+									"",
+									"pm.test(\"Status code is 409\", function () {",
+									"    pm.response.to.have.status(409);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"Reginald Hills\",\n    \"imageUrl\":\"https://imgur.com/kgie532\",\n    \"address\":{\n        \"addressline1\":\"5467 Macnamar St\",\n        \"addressline2\":null,\n        \"city\":\"Charlotte\",\n        \"statecode\":\"NC\",\n        \"zip\":\"28202\"\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -456,6 +499,31 @@
 				},
 				{
 					"name": "Tenants By Property",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Tenant Found\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].uuid).to.eql(pm.collectionVariables.get(\"tenantUUID\"));",
+									"",
+									"});",
+									"",
+									"pm.test(\"Property Found\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].property.uuid).to.eql(pm.collectionVariables.get(\"property1UUID\"));",
+									"",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -714,7 +782,7 @@
 					"response": []
 				},
 				{
-					"name": "Update Lease",
+					"name": "Update Lease With No Payload",
 					"event": [
 						{
 							"listen": "test",
@@ -734,6 +802,48 @@
 						"body": {
 							"mode": "raw",
 							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/leases/{{leaseId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"leases",
+								"{{leaseId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Lease With Payload",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"leaseStatus\":\"filled\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -994,6 +1104,31 @@
 				},
 				{
 					"name": "Invoice By Lease",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Invoice Found\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].uuid).to.eql(pm.collectionVariables.get(\"invoiceUUID\"));",
+									"",
+									"});",
+									"",
+									"pm.test(\"Lease Found\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].lease.uuid).to.eql(pm.collectionVariables.get(\"leaseUUID\"));",
+									"",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -1086,6 +1221,7 @@
 									"",
 									"",
 									"    pm.collectionVariables.set(\"paymentId\", jsonData.id);",
+									"     pm.collectionVariables.set(\"paymentUUID\", jsonData.uuid);",
 									"",
 									"    pm.expect(pm.collectionVariables.get(\"paymentId\")).to.eql(jsonData.id);",
 									"});"
@@ -1125,6 +1261,31 @@
 				},
 				{
 					"name": "Payments By Invoice",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Payment Found\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].uuid).to.eql(pm.collectionVariables.get(\"paymentUUID\"));",
+									"",
+									"});",
+									"",
+									"pm.test(\"Invoice Found\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].invoice.uuid).to.eql(pm.collectionVariables.get(\"invoiceUUID\"));",
+									"",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -1250,8 +1411,10 @@
 									"",
 									"    pm.collectionVariables.set(\"lineItemId\", jsonData.id);",
 									"",
+									"    pm.collectionVariables.set(\"lineItemUUID\", jsonData.uuid);",
+									"",
 									"    pm.expect(pm.collectionVariables.get(\"lineItemId\")).to.eql(jsonData.id);",
-									"});"
+									"}); "
 								],
 								"type": "text/javascript"
 							}
@@ -1288,6 +1451,31 @@
 				},
 				{
 					"name": "Line Items By Invoice",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Line Item Found\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].uuid).to.eql(pm.collectionVariables.get(\"lineItemUUID\"));",
+									"",
+									"});",
+									"",
+									"pm.test(\"Invoice Found\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].invoice.uuid).to.eql(pm.collectionVariables.get(\"invoiceUUID\"));",
+									"",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],

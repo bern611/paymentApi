@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "uuid": {
+      "type": "string"
+    },
+    "id": {
+      "type": "integer"
+    },
+    "name": {
+      "type": "string"
+    },
+    "imageUrl": {
+      "type": "string"
+    },
+    "address": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "addressline1": {
+          "type": "string"
+        },
+        "addressline2": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "statecode": {
+          "type": "string"
+        },
+        "zip": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "uuid",
+        "id",
+        "addressline1",
+        "addressline2",
+        "city",
+        "statecode",
+        "zip"
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "imageUrl",
+    "address"
+  ]
+}

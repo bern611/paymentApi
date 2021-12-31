@@ -26,7 +26,8 @@ public class PropertyRecordsRoute extends RouteBuilder {
 
         String filePath = assembleCamelFilePath();
 
-        errorHandler(deadLetterChannel("file:" + filePath + ".errors&fileExist=append&appendChars=\\"));
+        errorHandler(deadLetterChannel("file:" + filePath + ".errors&fileExist=append&appendChars=\\n"));
+        validator().type("json").withUri("json-validator:classpath:schema.json");
 
         from("file:" + filePath + "&readLock=changed")
                 .routeId("Import Property Data Route")
@@ -37,17 +38,20 @@ public class PropertyRecordsRoute extends RouteBuilder {
     }
 
     private String assembleCamelFilePath() {
-        String newString = new String();
-        for (int i = 0; i < pathToFile.length(); i++) {
-
-            newString += pathToFile.charAt(i);
-
-            if (i == pathToFile.lastIndexOf("/")) {
-                newString += "?fileName=";
+        try {
+            String newString = new String();
+            for (int i = 0; i < pathToFile.length(); i++) {
+                
+                newString += pathToFile.charAt(i);
+                
+                if (i == pathToFile.lastIndexOf("/")) {
+                    newString += "?fileName=";
+                }
             }
+            return newString;
+        } catch (Exception e) {
+            throw new RuntimeException("Error Parsing Path to CSV");
         }
-
-        return newString;
     }
 
  

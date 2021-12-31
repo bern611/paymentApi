@@ -5,17 +5,10 @@
  */
 package com.bern.norstienpaymentsapi.resources;
 
-import com.bern.norstienpaymentsapi.daos.InvoiceDao;
-import com.bern.norstienpaymentsapi.daos.LeaseDao;
 import com.bern.norstienpaymentsapi.entity.Invoice;
-import com.bern.norstienpaymentsapi.entity.Lease;
-import com.bern.norstienpaymentsapi.repositories.InvoiceRepository;
-import com.bern.norstienpaymentsapi.repositories.LeaseRepository;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import javax.transaction.Transactional;
-import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -25,6 +18,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
+import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.util.json.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -37,15 +31,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class InvoiceResource {
 
     @Autowired
-    InvoiceDao invoiceManager;
+    private FluentProducerTemplate template;
 
     @POST
     @Consumes("application/json")
     @Produces("application/json")
     @Path("/leases/uuid/{uuid}")
     public Response createInvoice(@PathParam("uuid") UUID leaseUuid, Invoice invoice) {
-        return Response.ok(invoiceManager.createInvoice(leaseUuid, invoice)).build();
 
+        return Response.ok(template
+                .withDefaultEndpoint("direct:postInvoice")
+                .withHeader("uuid", leaseUuid)
+                .withBody(invoice)
+                .request())
+                .build();
     }
 
     @GET
@@ -53,7 +52,10 @@ public class InvoiceResource {
     @Path("/leases/uuid/{uuid}")
     public Response findInvoiceByLease(@PathParam("uuid") UUID leaseUuid) {
 
-        List<Invoice> invoices = invoiceManager.findInvoicesByLease(leaseUuid);
+        List<Invoice> invoices = (List<Invoice>) template
+                .withDefaultEndpoint("direct:getInvoicesByLease")
+                .withBody(leaseUuid)
+                .request();
         if (!invoices.isEmpty()) {
             return Response.ok(invoices).build();
         } else {
@@ -64,15 +66,25 @@ public class InvoiceResource {
 
     @GET
     @Produces("application/json")
-    public List<Invoice> findAll() {
-        return invoiceManager.findAll();
+    public Response findAll() {
+        List<Invoice> invoices = (List<Invoice>) template.withDefaultEndpoint("direct:getAllInvoices").request();
+
+        if (invoices.size() > 0) {
+            return Response.ok(invoices).build();
+        } else {
+            return Response.noContent().build();
+        }
     }
 
     @GET
     @Produces("application/json")
     @Path("/{id}")
     public Response getInvoiceById(@PathParam("id") long id) {
-        return Response.ok().entity(invoiceManager.findById(id)).build();
+
+        return Response.ok().entity(
+                template.withDefaultEndpoint("direct:getInvoiceById")
+                        .withBody(id).request())
+                .build();
     }
 
     @PUT
@@ -80,32 +92,26 @@ public class InvoiceResource {
     @Produces("application/json")
     @Path("/{id}")
     public Response updateInvoice(@PathParam("id") long id, JsonObject payload) {
-        
-        
 
-        
-
-        Invoice invoice = invoiceManager.findById(id);
-        if (invoice == null) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Could not find invoice with id " + id).build();
-        } else {
-            
-
-            return Response.ok(invoiceManager.updateInvoice(id, payload)).build();
-        }
+        return Response.ok(
+                template.withDefaultEndpoint("direct:updateInvoice")
+                        .withHeader("id", id)
+                        .withBody(payload)
+                        .request())
+                .build();
     }
 
     @DELETE
     @Path("/{id}")
     public Response deleteInvoice(@PathParam("id") long id) {
-        invoiceManager.delete(id);
+        template.withDefaultEndpoint("direct:deleteInvoiceById").withBody(id).request();
         return Response.noContent().build();
     }
 
     @DELETE
     @Path("/uuid/{uuid}")
     public Response deleteProperty(@PathParam("uuid") UUID uuid) {
-        invoiceManager.deleteByUuid(uuid);
+        template.withDefaultEndpoint("direct:deleteInvoiceByUuid").withBody(uuid).request();
         return Response.noContent().build();
     }
 

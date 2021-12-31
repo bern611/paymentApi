@@ -14,6 +14,8 @@ import java.util.UUID;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
+import org.apache.camel.Body;
+import org.apache.camel.Header;
 import org.apache.camel.util.json.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +34,7 @@ public class TenantDao {
     @Autowired
     private PropertyDao propertyManager;
 
-    public Tenant createTenant(UUID propertyUuid, @Valid Tenant tenant) {
+    public Tenant createTenant(@Header("uuid") UUID propertyUuid, @Body @Valid Tenant tenant) {
 
         Property property = propertyManager.findByUuid(propertyUuid);
 
@@ -52,7 +54,7 @@ public class TenantDao {
         }
     }
 
-    public List<Tenant> findTenantsByProperty(UUID propertyUuid) {
+    public List<Tenant> findTenantsByProperty(@Body UUID propertyUuid) {
 
         Property property = propertyManager.findByUuid(propertyUuid);
         return tenantRepo.findTenantsByProperty(property);
@@ -63,7 +65,7 @@ public class TenantDao {
         return tenantRepo.findAll();
     }
 
-    public Tenant findById(long id) {
+    public Tenant findById(@Body long id) {
         try {
             return tenantRepo.findById(id);
         } catch (Exception e) {
@@ -71,7 +73,7 @@ public class TenantDao {
         }
     }
 
-    public void deleteById(long id) {
+    public void deleteById(@Body long id) {
         try {
             tenantRepo.deleteById(id);
         } catch (Exception e) {
@@ -79,7 +81,7 @@ public class TenantDao {
         }
     }
 
-    public void deleteByUuid(UUID uuid) {
+    public void deleteByUuid(@Body UUID uuid) {
         try {
             tenantRepo.deleteByUuid(uuid);
         } catch (Exception e) {
@@ -87,24 +89,29 @@ public class TenantDao {
         }
     }
 
-    public Tenant updateTenantResidence(long id, JsonObject payload) {
+    public Tenant updateTenantResidence(@Header("id") long id, @Body JsonObject payload) {
         if (payload != null && payload.containsKey("newPropertyUuid")) {
 
             UUID propertyUuid = UUID.fromString(payload.getString("newPropertyUuid"));
 
             Property updateProperty = propertyManager.findByUuid(propertyUuid);
             Tenant updateTenant = findById(id);
-
+            
+            if(updateTenant!= null && updateProperty != null){
+            
             updateTenant.setProperty(updateProperty);
             updateTenant.setUpdatedAt(ZonedDateTime.now());
             return updateTenant;
-
+            }
+            else{
+                throw new EntityNotFoundException("Unable to locate pair Tenant # " + id + " and/or Property " + propertyUuid);
+            }
         } else {
             throw new InvalidPayloadException("Payload Must Contain Key newPropertyUuid");
         }
     }
 
-    Tenant findByUuid(UUID uuid) {
+    public Tenant findByUuid(@Body UUID uuid) {
         try {
             return tenantRepo.findByUuid(uuid);
         } catch (Exception e) {

@@ -13,9 +13,9 @@ import java.util.UUID;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
+import org.apache.camel.Body;
+import org.apache.camel.Header;
 import org.apache.camel.util.json.JsonObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -31,27 +31,24 @@ public class PropertyDao {
 
     @Autowired
     private PropertyRepository propertyRepo;
-    
-    private static final Logger LOG = LoggerFactory.getLogger(PropertyDao.class);
+
 
     public List<Property> findAll() {
         return propertyRepo.findAll();
     }
 
-    public Property save(@Valid Property property) {
+    public Property save( @Body @Valid Property property) {
         try {
-            
+
             Property returnProperty = propertyRepo.save(property);
-            
-            LOG.info("Property " + returnProperty.getUuid() + " saved");
-            
-            return returnProperty;   
-        }   catch (Exception ex) {
+
+            return returnProperty;
+        } catch (Exception ex) {
             throw new RuntimeException("Error Saving Property");
         }
     }
 
-    public Property findById(long id) {
+    public Property findById(@Body long id) {
         try {
             return propertyRepo.findById(id);
         } catch (Exception e) {
@@ -59,16 +56,15 @@ public class PropertyDao {
         }
     }
 
-    public void deleteById(long id) {
+    public void deleteById(@Body long id) {
         try {
-            LOG.info("Attempting to Delete Property " + id);
             propertyRepo.deleteById(id);
         } catch (Exception e) {
             throw new EntityNotFoundException("Unabled to Find Property With Id " + id);
         }
     }
 
-    public void deleteByUuid(UUID uuid) {
+    public void deleteByUuid(@Body UUID uuid) {
         try {
             propertyRepo.deleteByUuid(uuid);
         } catch (Exception e) {
@@ -76,7 +72,7 @@ public class PropertyDao {
         }
     }
 
-    public Property updateProperty(long id, JsonObject payload) {
+    public Property updateProperty(@Header("id") long id, @Body JsonObject payload) {
         if (payload == null || !(payload.containsKey("name") || payload.containsKey("imageUrl"))) {
             throw new InvalidPayloadException("Payload must contain keys name or imageUrl");
         }
@@ -91,7 +87,6 @@ public class PropertyDao {
             if (payload.containsKey("imageUrl")) {
                 foundById.setImageUrl(payload.getString("imageUrl"));
             }
-            LOG.info("Updated Property " + foundById.getUuid());
             return save(foundById);
         }
     }

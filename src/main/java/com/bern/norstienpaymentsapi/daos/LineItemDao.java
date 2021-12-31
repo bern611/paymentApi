@@ -13,6 +13,8 @@ import java.util.UUID;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
+import org.apache.camel.Body;
+import org.apache.camel.Header;
 import org.apache.camel.util.json.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,7 +33,7 @@ public class LineItemDao {
     @Autowired
     InvoiceDao invoiceManager;
 
-    public LineItem createLineItem(UUID invoiceUuid, @Valid LineItem lineItem) {
+    public LineItem createLineItem(@Header("uuid") UUID invoiceUuid, @Body @Valid LineItem lineItem) {
         Invoice invoice = invoiceManager.findByUuid(invoiceUuid);
 
         lineItem.setInvoice(invoice);
@@ -43,30 +45,33 @@ public class LineItemDao {
         return lineItemRepo.save(lineItem);
     }
 
-    public Object updateLineItem(long id, JsonObject payload) {
+    public Object updateLineItem(@Header("id") long id, @Body JsonObject payload) {
 
         if (payload != null && (payload.containsKey("lineItemQuantity") || payload.containsKey("lineItemDescription") || payload.containsKey("lineItemAmount"))) {
 
             LineItem lineItem = findById(id);
-            if (payload.containsKey("lineItemQuantity")) {
-                lineItem.setQuantity(payload.getInteger("lineItemQuantity"));
-            }
+            if (lineItem != null) {
+                if (payload.containsKey("lineItemQuantity")) {
+                    lineItem.setQuantity(payload.getInteger("lineItemQuantity"));
+                }
 
-            if (payload.containsKey("lineItemDescription")) {
-                lineItem.setDescription(payload.getString("lineItemDescription"));
-            }
+                if (payload.containsKey("lineItemDescription")) {
+                    lineItem.setDescription(payload.getString("lineItemDescription"));
+                }
 
-            if (payload.containsKey("lineItemAmount")) {
-                lineItem.setAmount(payload.getDouble("lineItemAmount"));
+                if (payload.containsKey("lineItemAmount")) {
+                    lineItem.setAmount(payload.getDouble("lineItemAmount"));
+                }
+                return save(lineItem);
+            } else{
+                throw new EntityNotFoundException("Could not find LineItem With Id " + id);
             }
-
-            return save(lineItem);
         } else {
             throw new InvalidPayloadException("Payload must contain keys lineItemQuantity, lineItemDescription and/or lineItemAmount ");
         }
     }
 
-    public LineItem findById(long id) {
+    public LineItem findById(@Body long id) {
         try {
             return lineItemRepo.findById(id);
         } catch (Exception e) {
@@ -74,7 +79,7 @@ public class LineItemDao {
         }
     }
 
-    public LineItem findByUuid(UUID uuid) {
+    public LineItem findByUuid(@Body UUID uuid) {
         try {
             return lineItemRepo.findByUuid(uuid);
         } catch (Exception e) {
@@ -82,7 +87,7 @@ public class LineItemDao {
         }
     }
 
-    public List<LineItem> findLineItemsByInvoice(UUID invoiceUuid) {
+    public List<LineItem> findLineItemsByInvoice(@Body UUID invoiceUuid) {
         Invoice invoice = invoiceManager.findByUuid(invoiceUuid);
         return lineItemRepo.findLineItemsByInvoice(invoice);
     }
@@ -91,7 +96,7 @@ public class LineItemDao {
         return lineItemRepo.findAll();
     }
 
-    public void delete(long id) {
+    public void deleteById(@Body long id) {
         try {
             lineItemRepo.deleteById(id);
         } catch (Exception e) {
@@ -99,7 +104,7 @@ public class LineItemDao {
         }
     }
 
-    public void deleteByUuid(UUID uuid) {
+    public void deleteByUuid(@Body UUID uuid) {
         try {
             lineItemRepo.deleteByUuid(uuid);
         } catch (Exception e) {

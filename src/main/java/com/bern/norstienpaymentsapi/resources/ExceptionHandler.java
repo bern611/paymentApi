@@ -20,16 +20,18 @@ public class ExceptionHandler implements ExceptionMapper<Throwable> {
 
     @Override
     public Response toResponse(Throwable e) {
-        if (e instanceof EntityNotFoundException || e instanceof InvalidPayloadException) {
+        if (e.getCause() instanceof EntityNotFoundException || e.getCause() instanceof InvalidPayloadException) {
+            
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
         } 
         
-        else if (e.getCause() instanceof ConstraintViolationException){
+        if (e.getCause() instanceof ConstraintViolationException){
             return Response.status(Response.Status.CONFLICT).entity("Attempted to save non-unqiue entity").build();
         }
         
         else {
-            return Response.serverError().build();
+        //return Response.status(Response.Status.SERVICE_UNAVAILABLE).entity(e.getCause()).build();
+        return Response.serverError().build();
         }
     }
 

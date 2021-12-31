@@ -5,7 +5,6 @@
  */
 package com.bern.norstienpaymentsapi.resources;
 
-import com.bern.norstienpaymentsapi.daos.LineItemDao;
 import com.bern.norstienpaymentsapi.entity.LineItem;
 import java.util.List;
 import java.util.UUID;
@@ -19,6 +18,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
+import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.util.json.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -31,15 +31,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class LineItemResource {
 
     @Autowired
-    LineItemDao lineItemManager;
+    private FluentProducerTemplate template;
 
     @POST
     @Consumes("application/json")
     @Produces("application/json")
     @Path("/invoices/uuid/{uuid}")
     public Response createLineItem(@PathParam("uuid") UUID invoiceUuid, LineItem lineItem) {
-
-        return Response.ok().entity(lineItemManager.createLineItem(invoiceUuid, lineItem)).build();
+        
+        return Response.ok(template
+                .withDefaultEndpoint("direct:postLineItem")
+                .withHeader("uuid", invoiceUuid)
+                .withBody(lineItem)
+                .request())
+                .build();
     }
 
     @PUT
@@ -47,8 +52,13 @@ public class LineItemResource {
     @Produces("application/json")
     @Path("/{id}")
     public Response updateLineItem(@PathParam("id") long id, JsonObject payload) {
-
-        return Response.ok(lineItemManager.updateLineItem(id, payload)).build();
+        
+        return Response.ok(
+                template.withDefaultEndpoint("direct:updateLineItem")
+                        .withHeader("id", id)
+                        .withBody(payload)
+                        .request())
+                .build();
     }
 
     @GET
@@ -56,7 +66,11 @@ public class LineItemResource {
     @Path("/invoices/uuid/{uuid}")
     public Response findLineItemByInvoice(@PathParam("uuid") UUID invoiceUuid) {
 
-        List<LineItem> lineItems = lineItemManager.findLineItemsByInvoice(invoiceUuid);
+        List<LineItem> lineItems = (List<LineItem>) template
+                .withDefaultEndpoint("direct:getLineItemsByInvoice")
+                .withBody(invoiceUuid)
+                .request();
+        
         if (!lineItems.isEmpty()) {
             return Response.ok(lineItems).build();
         } else {
@@ -66,28 +80,38 @@ public class LineItemResource {
 
     @GET
     @Produces("application/json")
-    public List<LineItem> getAllLineItems() {
-        return lineItemManager.findAll();
+    public Response getAllLineItems() {
+        List<LineItem> lineItems = (List<LineItem>) template.withDefaultEndpoint("direct:getAllLineItems").request();
+        
+        if (!lineItems.isEmpty()) {
+            return Response.ok(lineItems).build();
+        } else {
+            return Response.noContent().build();
+        }
+        
     }
 
     @GET
     @Produces("application/json")
     @Path("/{id}")
     public Response findById(@PathParam("id") long id) {
-        return Response.ok(lineItemManager.findById(id)).build();
+        return Response.ok().entity(
+                template.withDefaultEndpoint("direct:getLineItemById")
+                        .withBody(id).request())
+                .build();
     }
 
     @DELETE
     @Path("/{id}")
     public Response deleteLineItem(@PathParam("id") long id) {
-        lineItemManager.delete(id);
+        template.withDefaultEndpoint("direct:deleteLineItemById").withBody(id).request();
         return Response.noContent().build();
     }
 
     @DELETE
     @Path("/uuid/{uuid}")
     public Response deleteLineItem(@PathParam("uuid") UUID uuid) {
-        lineItemManager.deleteByUuid(uuid);
+        template.withDefaultEndpoint("direct:deleteLineItemByUuid").withBody(uuid).request();
         return Response.noContent().build();
     }
 }
