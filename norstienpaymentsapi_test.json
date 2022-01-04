@@ -1608,6 +1608,59 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "All Line Items",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/line_item/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"line_item",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Invalid Line Item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/line_item/948",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"line_item",
+								"948"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -1855,6 +1908,10 @@
 		{
 			"key": "rootPropertyId",
 			"value": "0"
+		},
+		{
+			"key": "lineItemUUID",
+			"value": ""
 		}
 	]
 }

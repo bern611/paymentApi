@@ -51,12 +51,19 @@ public class PaymentDao {
 
     public Payment updatePayment(@Header("id") long id, @Body JsonObject payload) {
         if (payload != null && (payload.containsKey("paymentStatus"))) {
+
             Payment payment = findById(id);
 
-            payment.setStatus(PaymentStatus.valueOf(payload.getString("paymentStatus")));
-            payment.setUpdatedAt(ZonedDateTime.now());
+            if (payment == null) {
+                throw new EntityNotFoundException("Unable to Locate Payment # " + id);
+            } 
+            else {
+                payment.setStatus(PaymentStatus.valueOf(payload.getString("paymentStatus")));
+                payment.setUpdatedAt(ZonedDateTime.now());
 
-            return save(payment);
+                return save(payment);
+            }
+
         } else {
             throw new InvalidPayloadException("Payload must contain key paymentStatus");
         }
@@ -69,7 +76,7 @@ public class PaymentDao {
             throw new EntityNotFoundException("Could not find Payment With Id " + id);
         }
     }
-    
+
     public Payment findByUuid(@Body UUID uuid) {
         try {
             return paymentRepo.findByUuid(uuid);

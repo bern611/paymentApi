@@ -50,7 +50,7 @@ public class PropertyRecordsRoute extends RouteBuilder {
             }
             return newString;
         } catch (Exception e) {
-            throw new RuntimeException("Error Parsing Path to CSV");
+            throw new RuntimeException("Error Parsing Path to CSV File");
         }
     }
 

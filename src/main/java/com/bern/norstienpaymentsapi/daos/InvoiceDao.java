@@ -89,21 +89,24 @@ public class InvoiceDao {
 
     public Invoice updateInvoice(@Header("id") long id, @Body JsonObject payload) {
         if (payload != null && (payload.containsKey("paymentDueDate") || payload.containsKey("paidDate"))) {
-            
-            Invoice invoice = findById(id);
-            
-            if (payload.containsKey("paymentDueDate")) {
-                invoice.setPaymentDueDate(LocalDate.parse(payload.getString("paymentDueDate")));
-            }
 
-            if (payload.containsKey("paidDate")) {
-                invoice.setPaidDate(LocalDate.parse(payload.getString("paidDate")));
+            Invoice invoice = findById(id);
+            if (invoice == null) {
+                throw new EntityNotFoundException("Unable to Find Invoice Number " + id);
+            } 
+            else {
+                if (payload.containsKey("paymentDueDate")) {
+                    invoice.setPaymentDueDate(LocalDate.parse(payload.getString("paymentDueDate")));
+                }
+
+                if (payload.containsKey("paidDate")) {
+                    invoice.setPaidDate(LocalDate.parse(payload.getString("paidDate")));
+                }
+
+                return save(invoice);
             }
-            
-            return save(invoice);
-        }
-        else{
-            throw new InvalidPayloadException ("payload must contain keys paymentDueDate and/or paidDate");
+        } else {
+            throw new InvalidPayloadException("payload must contain keys paymentDueDate and/or paidDate");
         }
     }
 
