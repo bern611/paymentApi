@@ -1,15 +1,17 @@
 Spring Boot Application for Property Management
 
+
 Enviornment Variables:
-name			example
 
-PSQL_USER		userABA
-PSQL_PASS		fkjhut5356
-PSQL_URL		postgresql://postgresql:5432/
-PSQL_DB_NAME		sample db
+| Name                   | Example Value                   |
+|------------------------|---------------------------------|
+| PSQL_USER              | userABA                         |
+| PSQL_PASS              | jguyorv3452                     |
+| PSQL_URL               | postgres://postgres:5432        |
+| PSQL_DB_NAME           | sampledb                        |
+| PATH_TO_PROPERTIES_CSV | /path/to/mass/prop/add/file.csv | 
 
 
-To Run;
 
-java -jar app.jar --pathToCsvFile="/path/to/csv/file.csv"
+
 
